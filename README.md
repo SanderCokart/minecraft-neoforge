@@ -4,13 +4,6 @@ A Docker-based Minecraft server running Neoforge with comprehensive configuratio
 
 ## Configuration
 
-### Build-time Arguments
-
-| Argument | Default | Description |
-|----------|---------|-------------|
-| `RCON_ENABLED` | `0` | Enable RCON remote console (0=disabled, 1=enabled) |
-| `TLS_ENABLED` | `0` | Enable TLS for management server (0=disabled, 1=enabled) |
-
 ### Environment Variables
 
 All server properties can be configured via environment variables. Use uppercase with underscores instead of dashes (e.g., `MAX_PLAYERS` instead of `max-players`).
@@ -88,15 +81,15 @@ All server properties can be configured via environment variables. Use uppercase
 
 ### Docker Secrets
 
-Docker secrets provide a secure way to pass sensitive information to the container. Secrets are mounted at build-time and take precedence over environment variables.
+The management server secret must be provided at build time. Other sensitive configuration can be provided via environment variables or runtime secrets.
 
 | Secret Name | Required | Description | When Used |
 |-------------|----------|-------------|-----------|
-| `management_server_secret` | **Required** | Secret for management server authentication | Always |
-| `rcon_password` | Optional | Password for RCON access | When `RCON_ENABLED=1` |
-| `management_server_tls_keystore_password` | Optional | Password for TLS keystore | When `TLS_ENABLED=1` |
-| `WHITELIST_ENABLED` | Optional | Enable/disable whitelist | When using whitelist |
-| `WHITELIST_PLAYERS` | Optional | Comma-separated list of players | When whitelist enabled |
+| `management_server_secret` | **Required** | Secret for management server authentication | Always (build-time) |
+| `rcon_password` | Optional | Password for RCON access | Runtime via environment variable |
+| `management_server_tls_keystore_password` | Optional | Password for TLS keystore | Runtime via environment variable |
+| `WHITELIST_ENABLED` | Optional | Enable/disable whitelist | Runtime via environment variable |
+| `WHITELIST_PLAYERS` | Optional | Comma-separated list of players | Runtime via environment variable |
 
 ### Whitelist Configuration
 
@@ -112,18 +105,6 @@ WHITELIST_PLAYERS="uuid1:name1,uuid2:name2"
 
 ## Advanced Usage
 
-### Building with RCON Enabled
-
-```bash
-docker build --build-arg RCON_ENABLED=1 -t minecraft-server-rcon .
-```
-
-### Building with TLS Enabled
-
-```bash
-docker build --build-arg TLS_ENABLED=1 -t minecraft-server-tls .
-```
-
 ### Running with Custom Configuration
 
 ```bash
@@ -134,18 +115,18 @@ docker run -d \
   -e MAX_PLAYERS=50 \
   -e MOTD="My Awesome Server" \
   -e DIFFICULTY=hard \
+  -e RCON_PASSWORD="secure-password" \
   minecraft-server
 ```
 
-### Using Docker Secrets
+### Using Docker Secrets for Build
 
 ```bash
-# Create secrets
+# Create the required management server secret
 echo "my-secret-key" | docker secret create management_server_secret -
-echo "rcon-pass" | docker secret create rcon_password -
 
-# Build with secrets
-docker build --secret id=management_server_secret --secret id=rcon_password -t minecraft-server .
+# Build with the required secret
+docker build --secret id=management_server_secret -t minecraft-server .
 ```
 
 ## Mods Included

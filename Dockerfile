@@ -11,7 +11,7 @@ RUN echo "eula=true" > eula.txt
 RUN chmod +x configure-server.sh
 
 # Configure server properties with build-time secret
-RUN --mount=type=secret,id=management_server_secret \
+RUN --mount=type=secret,id=MANAGEMENT_SERVER_SECRET \
     ./configure-server.sh
 
 CMD ["./run.sh"]

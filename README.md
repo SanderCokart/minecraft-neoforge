@@ -85,9 +85,9 @@ The management server secret must be provided at build time. Other sensitive con
 
 | Secret Name | Required | Description | When Used |
 |-------------|----------|-------------|-----------|
-| `management_server_secret` | **Required** | Secret for management server authentication | Always (build-time) |
-| `rcon_password` | Optional | Password for RCON access | Runtime via environment variable |
-| `management_server_tls_keystore_password` | Optional | Password for TLS keystore | Runtime via environment variable |
+| `MANAGEMENT_SERVER_SECRET` | **Required** | Secret for management server authentication | Always (build-time) |
+| `RCON_PASSWORD` | Optional | Password for RCON access | Runtime via environment variable |
+| `MANAGEMENT_SERVER_TLS_KEYSTORE_PASSWORD` | Optional | Password for TLS keystore | Runtime via environment variable |
 | `WHITELIST_ENABLED` | Optional | Enable/disable whitelist | Runtime via environment variable |
 | `WHITELIST_PLAYERS` | Optional | Comma-separated list of players | Runtime via environment variable |
 
@@ -123,10 +123,10 @@ docker run -d \
 
 ```bash
 # Create the required management server secret
-echo "my-secret-key" | docker secret create management_server_secret -
+echo "my-secret-key" | docker secret create MANAGEMENT_SERVER_SECRET -
 
 # Build with the required secret
-docker build --secret id=management_server_secret -t minecraft-server .
+docker build --secret id=MANAGEMENT_SERVER_SECRET -t minecraft-server .
 ```
 
 ## Mods Included

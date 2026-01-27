@@ -1,167 +1,130 @@
-# Minecraft Neoforge Server
+# Minecraft NeoForge Server with itzg/minecraft-server
 
-A Docker-based Minecraft server running Neoforge with comprehensive configuration options.
+A Docker-based Minecraft server using the official [itzg/minecraft-server](https://github.com/itzg/docker-minecraft-server) image with NeoForge mod loader.
 
-## Configuration
+## Overview
 
-### Environment Variables
+This server uses the `itzg/minecraft-server` Docker image configured for NeoForge, providing automatic server downloads, updates, and comprehensive configuration options through environment variables.
 
-All server properties can be configured via environment variables. Use uppercase with underscores instead of dashes (e.g., `MAX_PLAYERS` instead of `max-players`).
+## Quick Start
 
-| Environment Variable | Default | Description | Secret Support |
-|---------------------|---------|-------------|----------------|
-| `ACCEPTS_TRANSFERS` | `false` | Allow server transfers | No |
-| `ALLOW_FLIGHT` | `false` | Allow flying | No |
-| `BROADCAST_CONSOLE_TO_OPS` | `true` | Broadcast console commands to ops | No |
-| `BROADCAST_RCON_TO_OPS` | `true` | Broadcast RCON commands to ops | No |
-| `BUG_REPORT_LINK` | `""` | Custom bug report link | No |
-| `DIFFICULTY` | `easy` | Server difficulty (peaceful/easy/normal/hard) | No |
-| `ENABLE_CODE_OF_CONDUCT` | `false` | Enable code of conduct | No |
-| `ENABLE_JMX_MONITORING` | `false` | Enable JMX monitoring | No |
-| `ENABLE_QUERY` | `false` | Enable query protocol | No |
-| `ENABLE_RCON` | `false` | Enable RCON | No |
-| `ENABLE_STATUS` | `true` | Enable server status | No |
-| `ENFORCE_SECURE_PROFILE` | `true` | Enforce secure profile | No |
-| `ENFORCE_WHITELIST` | `false` | Enforce whitelist | No |
-| `ENTITY_BROADCAST_RANGE_PERCENTAGE` | `100` | Entity broadcast range percentage | No |
-| `FORCE_GAMEMODE` | `false` | Force gamemode | No |
-| `FUNCTION_PERMISSION_LEVEL` | `2` | Function permission level | No |
-| `GAMEMODE` | `survival` | Default gamemode | No |
-| `GENERATE_STRUCTURES` | `true` | Generate structures | No |
-| `GENERATOR_SETTINGS` | `{}` | Generator settings JSON | No |
-| `HARDCORE` | `false` | Hardcore mode | No |
-| `HIDE_ONLINE_PLAYERS` | `false` | Hide online players | No |
-| `INITIAL_DISABLED_PACKS` | `""` | Initially disabled packs | No |
-| `INITIAL_ENABLED_PACKS` | `vanilla` | Initially enabled packs | No |
-| `LEVEL_NAME` | `world` | World name | No |
-| `LEVEL_SEED` | `""` | World seed | No |
-| `LEVEL_TYPE` | `minecraft:normal` | Level type | No |
-| `LOG_IPS` | `true` | Log player IPs | No |
-| `MANAGEMENT_SERVER_ALLOWED_ORIGINS` | `""` | Allowed origins for management server | No |
-| `MANAGEMENT_SERVER_ENABLED` | `false` | Enable management server | No |
-| `MANAGEMENT_SERVER_HOST` | `localhost` | Management server host | No |
-| `MANAGEMENT_SERVER_PORT` | `0` | Management server port | No |
-| `MANAGEMENT_SERVER_SECRET` | *(auto-generated)* | Management server secret | **Required** (secret) |
-| `MANAGEMENT_SERVER_TLS_ENABLED` | `true` | Enable TLS for management server | No |
-| `MANAGEMENT_SERVER_TLS_KEYSTORE` | `""` | TLS keystore path | No |
-| `MANAGEMENT_SERVER_TLS_KEYSTORE_PASSWORD` | `""` | TLS keystore password | **Optional** (secret) |
-| `MAX_CHAINED_NEIGHBOR_UPDATES` | `1000000` | Max chained neighbor updates | No |
-| `MAX_PLAYERS` | `20` | Maximum players | No |
-| `MAX_TICK_TIME` | `60000` | Max tick time (ms) | No |
-| `MAX_WORLD_SIZE` | `29999984` | Max world size | No |
-| `MOTD` | `A Minecraft Server` | Server message of the day | No |
-| `NETWORK_COMPRESSION_THRESHOLD` | `256` | Network compression threshold | No |
-| `ONLINE_MODE` | `true` | Online mode authentication | No |
-| `OP_PERMISSION_LEVEL` | `4` | OP permission level | No |
-| `PAUSE_WHEN_EMPTY_SECONDS` | `60` | Pause when empty (seconds) | No |
-| `PLAYER_IDLE_TIMEOUT` | `0` | Player idle timeout (minutes) | No |
-| `PREVENT_PROXY_CONNECTIONS` | `false` | Prevent proxy connections | No |
-| `QUERY_PORT` | `25565` | Query port | No |
-| `RATE_LIMIT` | `0` | Rate limit | No |
-| `RCON_PASSWORD` | `""` | RCON password | **Optional** (secret) |
-| `RCON_PORT` | `25575` | RCON port | No |
-| `REGION_FILE_COMPRESSION` | `deflate` | Region file compression | No |
-| `REQUIRE_RESOURCE_PACK` | `false` | Require resource pack | No |
-| `RESOURCE_PACK` | `""` | Resource pack URL | No |
-| `RESOURCE_PACK_ID` | `""` | Resource pack ID | No |
-| `RESOURCE_PACK_PROMPT` | `""` | Resource pack prompt | No |
-| `RESOURCE_PACK_SHA1` | `""` | Resource pack SHA1 | No |
-| `SERVER_IP` | `""` | Server IP binding | No |
-| `SERVER_PORT` | `25565` | Server port | No |
-| `SIMULATION_DISTANCE` | `10` | Simulation distance | No |
-| `SPAWN_PROTECTION` | `16` | Spawn protection radius | No |
-| `STATUS_HEARTBEAT_INTERVAL` | `0` | Status heartbeat interval | No |
-| `SYNC_CHUNK_WRITES` | `true` | Sync chunk writes | No |
-| `TEXT_FILTERING_CONFIG` | `""` | Text filtering config | No |
-| `TEXT_FILTERING_VERSION` | `0` | Text filtering version | No |
-| `USE_NATIVE_TRANSPORT` | `true` | Use native transport | No |
-| `VIEW_DISTANCE` | `10` | View distance | No |
-| `WHITELIST_ENABLED` | `false` | Enable whitelist | **Optional** (secret) |
-| `WHITELIST_PLAYERS` | `""` | Whitelist players (comma-separated) | **Optional** (secret) |
+Build and run the server:
 
-### Docker Secrets
+```bash
+docker build -t minecraft-server .
+docker run -d -p 25565:25565 --name minecraft-server minecraft-server
+```
 
-The management server secret must be provided at build time. Other sensitive configuration can be provided via environment variables or runtime secrets.
+## Dokploy Configuration
 
-| Secret Name | Required | Description | When Used |
-|-------------|----------|-------------|-----------|
-| `MANAGEMENT_SERVER_SECRET` | **Required** | Secret for management server authentication | Always (build-time) |
-| `RCON_PASSWORD` | Optional | Password for RCON access | Runtime via environment variable |
-| `MANAGEMENT_SERVER_TLS_KEYSTORE_PASSWORD` | Optional | Password for TLS keystore | Runtime via environment variable |
-| `WHITELIST_ENABLED` | Optional | Enable/disable whitelist | Runtime via environment variable |
-| `WHITELIST_PLAYERS` | Optional | Comma-separated list of players | Runtime via environment variable |
+Configure the following environment variables in your Dokploy deployment:
+
+### Required Variables
+| Variable | Value | Description |
+|----------|-------|-------------|
+| `EULA` | `TRUE` | Accept Minecraft EULA (required) |
+| `TYPE` | `NEOFORGE` | Server type (automatically set) |
+| `VERSION` | `1.21.11` | Minecraft version (automatically set) |
+| `NEOFORGE_VERSION` | `21.11.0` | NeoForge version (automatically set) |
+
+### Common Configuration Variables
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MOTD` | `A Minecraft Server` | Server message of the day |
+| `DIFFICULTY` | `easy` | Server difficulty (peaceful/easy/normal/hard) |
+| `MAX_PLAYERS` | `20` | Maximum number of players |
+| `VIEW_DISTANCE` | `10` | Server-side viewing distance |
+| `SIMULATION_DISTANCE` | `10` | Simulation distance |
+| `MEMORY` | `1G` | Java heap memory limit |
+| `MAX_MEMORY` | `1G` | Maximum Java heap memory |
+| `ENABLE_RCON` | `true` | Enable RCON for remote administration |
+| `RCON_PASSWORD` | *required if RCON enabled* | RCON password |
+
+### Memory Configuration
+For a modded server, set appropriate memory limits:
+- `MEMORY=4G`
+- `INIT_MEMORY=4G`
+- `MAX_MEMORY=4G`
+
+### RCON Configuration
+```bash
+ENABLE_RCON=TRUE
+RCON_PASSWORD=your_secure_password
+RCON_PORT=25575
+```
 
 ### Whitelist Configuration
-
-When `WHITELIST_ENABLED=true`, you can specify players using `WHITELIST_PLAYERS`:
-
 ```bash
-# Using player names (Minecraft resolves UUIDs)
-WHITELIST_PLAYERS="player1,player2,player3"
-
-# Using UUID:name format
-WHITELIST_PLAYERS="uuid1:name1,uuid2:name2"
+ENABLE_WHITELIST=TRUE
+WHITELIST=player1,player2,player3
 ```
 
-## Advanced Usage
+## Volumes
 
-### Running with Custom Configuration
+The container uses the following volumes:
+- `/data` - Server data directory (world saves, configs, mods)
 
+Mount a persistent volume for your world data:
 ```bash
-docker run -d \
-  --name minecraft-server \
-  -p 25565:25565 \
-  -v minecraft-world:/app/world \
-  -e MAX_PLAYERS=50 \
-  -e MOTD="My Awesome Server" \
-  -e DIFFICULTY=hard \
-  -e RCON_PASSWORD="secure-password" \
-  minecraft-server
-```
-
-### Using Docker Secrets for Build
-
-```bash
-# Create the required management server secret
-echo "my-secret-key" | docker secret create MANAGEMENT_SERVER_SECRET -
-
-# Build with the required secret
-docker build --secret id=MANAGEMENT_SERVER_SECRET -t minecraft-server .
+-v minecraft-data:/data
 ```
 
 ## Mods Included
 
-This server comes pre-configured with the following mods:
+The server comes pre-installed with the following NeoForge mods:
 
-- FallingTree
-- Jade
-- Mod Menu (NeoForge Edition)
-- MouseTweaks
-- ToolSwap
-- Animal Feeding Trough
-- Architectury
-- Balm
-- Collective
-- Inventory Essentials
-- Just Enough Items (JEI)
-- Sophisticated Core
-- Sophisticated Storage
-- Spark
-- Stack Refill
-- TrashSlot
-- Wooden Hopper
-
-## Volumes
-
-- `/app/world` - Persistent world data
+- **FallingTree** - Auto-break entire trees
+- **Jade** - WAILA (What Am I Looking At) mod
+- **Mod Menu** - In-game mod configuration menu
+- **MouseTweaks** - Enhanced item moving/dragging
+- **ToolSwap** - Auto-switch to appropriate tools
+- **Animal Feeding Trough** - Automated animal feeding
+- **Architectury** - Cross-platform mod framework
+- **Balm** - Library mod for other mods
+- **Collective** - Shared library for mods
+- **Inventory Essentials** - Enhanced inventory management
+- **Just Enough Items (JEI)** - Item/recipe viewer
+- **Sophisticated Core** - Storage mod framework
+- **Sophisticated Storage** - Advanced storage solutions
+- **Spark** - Performance profiling tool
+- **Stack Refill** - Auto-refill stacks
+- **TrashSlot** - Quick item disposal
+- **Wooden Hopper** - Wooden hopper blocks
 
 ## Ports
 
 - `25565` - Minecraft server port
-- `25575` - RCON port (if enabled)
+- `25575` - RCON port (when enabled)
 
-## JVM Configuration
+## Deployment with Dokploy
 
-JVM arguments can be customized by modifying `user_jvm_args.txt` before building the image.
+1. **Build the image** in your CI/CD pipeline or locally
+2. **Deploy to Dokploy** with the environment variables above
+3. **Mount persistent volumes** for `/data` to preserve world data
+4. **Configure networking** to expose port 25565
 
-Default recommended setting for modded servers: 4GB RAM (`-Xmx4G -Xms4G`)
+### Example Dokploy Environment Variables
+
+```bash
+EULA=TRUE
+TYPE=NEOFORGE
+VERSION=1.21.11
+NEOFORGE_VERSION=21.11.0
+MOTD=Welcome to My NeoForge Server!
+DIFFICULTY=normal
+MAX_PLAYERS=10
+MEMORY=4G
+MAX_MEMORY=4G
+ENABLE_RCON=TRUE
+RCON_PASSWORD=secure_password_here
+```
+
+## Updating
+
+The `itzg/minecraft-server` image supports automatic updates. To update your server:
+
+1. Pull the latest base image
+2. Rebuild your custom image
+3. Restart your Dokploy deployment
+
+The server will automatically download the latest compatible versions based on your `VERSION` and `NEOFORGE_VERSION` settings.

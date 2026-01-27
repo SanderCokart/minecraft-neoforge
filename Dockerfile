@@ -1,17 +1,25 @@
-FROM sourcemation/jre-21
+FROM itzg/minecraft-server
 
-WORKDIR /app
-COPY installer.jar installer.jar
+# Set NeoForge as the server type
+ENV TYPE=NEOFORGE
 
-RUN java -jar installer.jar --installServer
+# Set Minecraft version (based on your mods)
+ENV VERSION=1.21.11
 
-COPY . .
+# Use NeoForge 21.11 for Minecraft 1.21.11
+ENV NEOFORGE_VERSION=21.11.0
 
-RUN echo "eula=true" > eula.txt
-RUN chmod +x configure-server.sh
+# Accept EULA (required) - will be overridden by Dokploy
+ENV EULA=TRUE
 
-# Configure server properties with build-time secret
-RUN --mount=type=secret,id=MANAGEMENT_SERVER_SECRET \
-    ./configure-server.sh
+# Copy server properties and other configuration
+COPY server.properties /data/server.properties
+COPY user_jvm_args.txt /data/user_jvm_args.txt
 
-CMD ["./run.sh"]
+# Copy mods directory
+COPY mods/ /data/mods/
+
+# Expose Minecraft port
+EXPOSE 25565
+
+# Default command (inherited from base image)

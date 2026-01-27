@@ -2,20 +2,6 @@
 
 A Docker-based Minecraft server running Neoforge with comprehensive configuration options.
 
-## Quick Start
-
-```bash
-# Build the image
-docker build -t minecraft-server .
-
-# Run the server
-docker run -d \
-  --name minecraft-server \
-  -p 25565:25565 \
-  -v minecraft-world:/app/world \
-  minecraft-server
-```
-
 ## Configuration
 
 ### Build-time Arguments

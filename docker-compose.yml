@@ -4,6 +4,8 @@ services:
     pull_policy: daily
     tty: true
     stdin_open: true
+    env_file:
+      - .env
     environment:
       EULA: "TRUE"
     volumes:

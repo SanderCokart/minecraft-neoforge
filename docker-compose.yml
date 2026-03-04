@@ -12,6 +12,7 @@ services:
       # attach the relative directory 'data' to the container's /data path
       - /var/lib/minecraft/data:/data
       - ./mods:/mods
+      - /var/lib/minecraft/world:/world
     healthcheck:
       test: mc-health
       start_period: 1m
